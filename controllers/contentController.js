@@ -206,7 +206,9 @@ const createContent = async (req, res) => {
     const newContent = new ContentModel({
       qrCode: qrId,
       contentType: contentType ? contentType : "text",
-      contentUrl: contentUrl ? `http://192.168.43.85:5000${contentUrl}` : null,
+      contentUrl: contentUrl
+        ? `https://damonbe-production.up.railway.app${contentUrl}`
+        : null,
       text: text ? text : "",
     });
 
