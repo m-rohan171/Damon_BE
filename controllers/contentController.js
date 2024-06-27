@@ -211,6 +211,7 @@ const createContent = async (req, res) => {
         : null,
       text: text ? text : "",
     });
+    
 
     await newContent.save();
 
