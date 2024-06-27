@@ -147,7 +147,7 @@ const createQRCode = async (req, res) => {
 
 const getQRCode = async (req, res) => {
   try {
-    const qrCode = await QRCode.findById(req.params.id);
+    const qrCode = await QRCodeModel.findById(req.params.id);
     if (!qrCode) {
       return res.status(404).send({ message: "QR Code not found" });
     }
