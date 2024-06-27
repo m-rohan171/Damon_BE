@@ -164,7 +164,7 @@ const getUserQR = async (req, res) => {
 
     if (!findQr) {
       console.log("No QR code found");
-      return res.status(400).send({ message: "No QR code found" });
+      return res.status(400).send({ status: 400, message: "No QR code found", data: null });
     }
     console.log("QR code found is", findQr);
     return res.status(200).send(findQr);
