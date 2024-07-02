@@ -28,8 +28,13 @@ router.get(
 
 // Get the current content associated with a QR code
 router.get(
-  "/current-content/:qrCodeId",
+  "/current-content/qr/:qrCodeId",
   authenticate,
+  contentController.getCurrentContentByQRCode
+);
+
+router.get(
+  "/current-content/user/:userId",
   contentController.getCurrentContentByQRCode
 );
 

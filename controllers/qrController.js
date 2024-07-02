@@ -1,109 +1,4 @@
-// const QRCode = require("../models/QRCode");
-// const HistoricalContent = require("../models/HistoricalContent");
-// const path = require("path");
-
-// const createQRCode = async (req, res) => {
-//   try {
-//     const { text } = req.body;
-//     let contentType = "text";
-//     let contentUrl = null;
-
-//     if (req.file) {
-//       contentUrl = path.join("/uploads", req.file.filename);
-//       contentType = "file";
-//     }
-
-//     const qrCodeData = {
-//       text: text || contentUrl,
-//       contentType,
-//       contentUrl,
-//     };
-
-//     const qrCode = new QRCode(qrCodeData);
-//     await qrCode.save();
-
-//     const historicalContent = new HistoricalContent({
-//       qrCode: qrCode._id,
-//       contentType,
-//       contentUrl,
-//     });
-
-//     await historicalContent.save();
-
-//     res.status(201).send({ qrCodeData: qrCode });
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// };
-
-// const createQRCode = async (req, res) => {
-//   try {
-//     const { text } = req.body;
-//     let contentType = "text"; // Default to text
-
-//     let contentUrl = null;
-//     if (req.file) {
-//       // Assuming you want to differentiate content type based on file extension or MIME type
-//       const fileExtension = req.file.originalname
-//         .split(".")
-//         .pop()
-//         .toLowerCase(); // Get file extension
-//       if (fileExtension === "mp3" || fileExtension === "wav") {
-//         contentType = "audio";
-//       } else if (fileExtension === "mp4" || fileExtension === "avi") {
-//         contentType = "video";
-//       } else {
-//         contentType = "file"; // Default to file if no specific match
-//       }
-
-//       contentUrl = `/uploads/${req.file.filename}`; // Construct the URL
-//     }
-
-//     const qrCodeData = {
-//       text,
-//       contentType,
-//       contentUrl: `http://192.168.100.14:5000${contentUrl}`, // Full URL including hostname
-//     };
-
-//     const qrCode = new QRCode(qrCodeData);
-//     await qrCode.save();
-
-//     const historicalContent = new HistoricalContent({
-//       qrCode: qrCode._id,
-//       contentType,
-//       contentUrl: `http://192.168.100.14:5000${contentUrl}`, // Full URL including hostname
-//     });
-
-//     await historicalContent.save();
-
-//     res.status(201).send({ qrCodeData: qrCode });
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// };
-
-// const getQRCode = async (req, res) => {
-//   try {
-//     const qrCode = await QRCode.findById(req.params.id);
-//     if (!qrCode) {
-//       return res.status(404).send({ message: "QR Code not found" });
-//     }
-
-//     const historicalContents = await HistoricalContent.find({
-//       qrCode: qrCode._id,
-//     });
-
-//     res.status(200).send({ qrCode, historicalContents });
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// };
-
-// module.exports = {
-//   createQRCode,
-//   getQRCode,
-// };
-
+const { default: mongoose } = require("mongoose");
 const QRCodeModel = require("../models/QRCode");
 const fs = require("fs");
 const path = require("path");
@@ -128,6 +23,16 @@ const createQRCode = async (req, res) => {
     // Generate the QR code and save it as a file1
     await QRCode.toFile(filePath, text);
 
+    const userObjId = new mongoose.Types.ObjectId(userId);
+
+    const findQr = await QRCodeModel.findOne({ user: userObjId });
+
+    if (findQr) {
+      return res
+        .status(400)
+        .send({ status: 400, message: "QR code already exists" });
+    }
+
     // Save QR code metadata to the database
     const qrCode = new QRCodeModel({
       text: text,
@@ -137,8 +42,9 @@ const createQRCode = async (req, res) => {
       currentContent: null,
     });
     await qrCode.save();
+    const qrCodeURLWithUserId = `${qrCode.text}?userId=${userId}`;
     console.log("QR code created", qrCode);
-    res.status(201).send({ qrCodeURL: qrCode.url, text: qrCode.text });
+    res.status(201).send({ qrCodeURL: qrCode.url, text: qrCodeURLWithUserId });
   } catch (error) {
     console.error("Error generating QR code", error);
     res.status(500).send({ message: error.message });
@@ -164,7 +70,9 @@ const getUserQR = async (req, res) => {
 
     if (!findQr) {
       console.log("No QR code found");
-      return res.status(400).send({ status: 400, message: "No QR code found", data: null });
+      return res
+        .status(400)
+        .send({ status: 400, message: "No QR code found", data: null });
     }
     console.log("QR code found is", findQr);
     return res.status(200).send(findQr);

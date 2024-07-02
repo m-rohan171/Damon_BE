@@ -11,7 +11,7 @@ const authenticate = async (req, res, next) => {
     req.headers["authorization"] || req.headers["Authorization"];
   const token = tokenHeader && tokenHeader.split(" ")[1];
 
-  console.log("tokenHeader", tokenHeader);
+  // console.log("tokenHeader", tokenHeader);
 
   // console.log("token is", token);
 
@@ -20,10 +20,10 @@ const authenticate = async (req, res, next) => {
       .status(401)
       .json({ status: 401, error: "Unauthorized: Missing token" });
   }
-  console.log("token is", token);
+  // console.log("token is", token);
   try {
     const decoded = jwt.verify(token, "tattqr");
-    console.log("Decoded Token:", decoded);
+    // console.log("Decoded Token:", decoded);
     var userId = new mongoose.Types.ObjectId(decoded.id);
 
     // console.log("user id is", userId);
@@ -44,10 +44,11 @@ const authenticate = async (req, res, next) => {
 
     req.user = {
       id: user._id,
-      userName: user.userName,
+      // userName: user.userName,
       email: user.email,
       qrCode: user.qrCode,
     };
+    // console.log("req.user is", req.user);
     next();
   } catch (error) {
     console.error("Error in authentication middleware:", error);
