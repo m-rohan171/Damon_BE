@@ -80,7 +80,7 @@ const createContent = async (req, res) => {
       qrCode: qrId,
       contentType: contentType ? contentType : "text",
       contentUrl: contentUrl
-        ? `https://damonbe-production.up.railway.app${contentUrl}`
+        ? `https://damonbe-production-ff33.up.railway.app${contentUrl}`
         : null,
       text: text ? text : "",
     });
