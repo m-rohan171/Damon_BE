@@ -33,18 +33,20 @@ const createQRCode = async (req, res) => {
         .send({ status: 400, message: "QR code already exists" });
     }
 
+    const qrCodeURLWithUserId = `${text}?userId=${userId}`;
+
     // Save QR code metadata to the database
     const qrCode = new QRCodeModel({
-      text: text,
+      text: qrCodeURLWithUserId,
       filePath: filePath,
       url: `https://damonbe-production-ff33.up.railway.app/uploads/${id}.png`,
       user: userId,
       currentContent: null,
     });
     await qrCode.save();
-    const qrCodeURLWithUserId = `${qrCode.text}?userId=${userId}`;
+    // const qrCodeURLWithUserId = `${qrCode.text}?userId=${userId}`;
     console.log("QR code created", qrCode);
-    res.status(201).send({ qrCodeURL: qrCode.url, text: qrCodeURLWithUserId });
+    res.status(201).send({ qrCodeURL: qrCode.url, text: qrCode.text });
   } catch (error) {
     console.error("Error generating QR code", error);
     res.status(500).send({ message: error.message });
