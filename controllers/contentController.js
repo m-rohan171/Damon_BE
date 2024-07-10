@@ -285,6 +285,7 @@ const getCurrentContentByQRCode = async (req, res) => {
 
     if (!qrCodeId) {
       const { userId } = req.params;
+      console.log("req.params is", req.params);
 
       if (!userId) {
         return res
@@ -292,12 +293,13 @@ const getCurrentContentByQRCode = async (req, res) => {
           .send({ message: "QR Code ID or User ID must be provided" });
       }
 
-      const userObjId = new mongoose.Types.ObjectId(userId);
+      // const userObjId = new mongoose.Types.ObjectId(userId);
 
       // Find the QR code by user ID
-      const user = await UserModel.findOne({ _id: userObjId }).populate(
+      const user = await UserModel.findOne({ username: userId }).populate(
         "qrCode"
       );
+      console.log("user is", user);
       if (!user) {
         return res
           .status(404)

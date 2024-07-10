@@ -15,8 +15,10 @@ ensureDirectoryExists(path.join(__dirname, "../uploads"));
 
 const createQRCode = async (req, res) => {
   try {
+    console.log("req.user is", req.user);
     const text = req.body.text;
     const userId = req.user.id;
+    const username = req.user.userName;
     const id = uuidv4();
 
     const filePath = path.join(__dirname, "../uploads", `${id}.png`);
@@ -33,7 +35,8 @@ const createQRCode = async (req, res) => {
         .send({ status: 400, message: "QR code already exists" });
     }
 
-    const qrCodeURLWithUserId = `${text}?userId=${userId}`;
+    // const qrCodeURLWithUserId = `${text}?uId=${userId}`;
+    const qrCodeURLWithUserId = `${text}?un=${username}`;
 
     // Save QR code metadata to the database
     const qrCode = new QRCodeModel({
