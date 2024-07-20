@@ -72,7 +72,7 @@ const createContent = async (req, res) => {
 
       contentUrl = `/uploads/${req.file.filename}`;
     } else if (contentType === "text") {
-      contentUrl = req.body.contentUrl ? req.body.contentUrl : null; // For text content, the URL can be directly provided
+      contentUrl = req.body.contentUrl ? req.body.contentUrl : null; 
     }
 
     // Create new content
