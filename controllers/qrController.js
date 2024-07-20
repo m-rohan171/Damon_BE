@@ -29,11 +29,11 @@ const createQRCode = async (req, res) => {
 
     const findQr = await QRCodeModel.findOne({ user: userObjId });
 
-    if (findQr) {
-      return res
-        .status(400)
-        .send({ status: 400, message: "QR code already exists" });
-    }
+    // if (findQr) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: 400, message: "QR code already exists" });
+    // }
 
     // const qrCodeURLWithUserId = `${text}?uId=${userId}`;
     const qrCodeURLWithUserId = `${text}?un=${username}`;
